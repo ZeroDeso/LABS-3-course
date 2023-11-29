@@ -1,0 +1,42 @@
+//Лабораторная работа №2
+
+
+// Родительский класс (суперкласс)
+class Vehicle {
+    private String brand;
+
+    public Vehicle(String brand) {
+        this.brand = brand;
+    }
+
+    public void drive() {
+        System.out.println("Этот транспорт движется по дороге");
+    }
+}
+
+// Дочерний класс (подкласс), наследующий от Vehicle
+class Car extends Vehicle {
+    private int numberOfSeats;
+
+    public Car(String brand, int numberOfSeats) {
+        super(brand); // Вызов конструктора суперкласса
+        this.numberOfSeats = numberOfSeats;
+    }
+
+    public void displayInfo() {
+        System.out.println("Марка автомобиля: " + super.brand);
+        System.out.println("Количество сидений: " + numberOfSeats);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Car car = new Car("Toyota", 5);
+        car.displayInfo(); // Вызов метода дочернего класса
+        car.drive(); // Вызов унаследованного метода родительского класса
+    }
+}
+
+
+//В этом примере класс Car наследует от класса Vehicle. При создании экземпляра класса Car, конструктор класса Vehicle вызывается с помощью ключевого слова super(brand), чтобы инициализировать поле brand в родительском классе. Класс Car также расширяет функциональность, добавляя свои собственные поля и методы, такие как numberOfSeats и displayInfo. Кроме того, он наследует метод drive от класса Vehicle.
+Таким образом, класс Car наследует свойства и поведение от класса Vehicle, что позволяет повторно использовать код и создавать иерархию классов.
