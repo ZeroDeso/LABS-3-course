@@ -1,0 +1,63 @@
+//Лабораторная работа №4
+
+// Класс Composite
+class Composite {
+    private List<Object> components = new ArrayList<>();
+
+    public void addComponent(Object component) {
+        components.add(component);
+    }
+
+    public void removeComponent(Object component) {
+        components.remove(component);
+    }
+
+    public void printComponents() {
+        for (Object component : components) {
+            System.out.println(component);
+        }
+    }
+}
+
+// Класс Aggregate
+class Aggregate {
+    private int value;
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
+}
+
+// Класс CompositeAggregate
+class CompositeAggregate extends Composite {
+    private Aggregate aggregate;
+
+    public CompositeAggregate(Aggregate aggregate) {
+        this.aggregate = aggregate;
+    }
+
+    @Override
+    public void addComponent(Object component) {
+        if (!(component instanceof Aggregate)) {
+            throw new IllegalArgumentException("Only Aggregate objects can be added to CompositeAggregate");
+        }
+        aggregate.addComponent((Aggregate) component);
+    }
+
+    @Override
+    public void removeComponent(Object component) {
+        if (!(component instanceof Aggregate)) {
+            throw new IllegalArgumentException("Only Aggregate objects can be removed from CompositeAggregate");
+        }
+        aggregate.removeComponent((Aggregate) component);
+    }
+
+    @Override
+    public void printComponents() {
+        aggregate.printComponents();
+    }
+}
