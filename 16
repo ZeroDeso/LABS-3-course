@@ -1,0 +1,76 @@
+import org.languagetool.JLanguageTool;
+import org.languagetool.language.AmericanEnglish;
+import org.languagetool.rules.RuleMatch;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.io.IOException;
+import java.util.List;
+
+public class SimpleSpellCheckEditor extends JFrame {
+    private JTextArea textArea;
+    private JLanguageTool languageTool;
+
+    public SimpleSpellCheckEditor() {
+        setTitle("Простой Текстовый Редактор с Проверкой Орфографии");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(600, 400);
+
+        textArea = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        add(scrollPane, BorderLayout.CENTER);
+
+        languageTool = new JLanguageTool(new AmericanEnglish());
+
+        // Добавим слушатель изменений текста для непрерывной проверки орфографии
+        textArea.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                performSpellCheck();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                performSpellCheck();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+    }
+
+    private void performSpellCheck() {
+        // Проверка орфографии при каждом изменении текста
+        SwingUtilities.invokeLater(() -> {
+            try {
+                String text = textArea.getText();
+                List<RuleMatch> matches = languageTool.check(text);
+
+                // Проходим по найденным ошибкам и предлагаем замену
+                for (RuleMatch match : matches) {
+                    String incorrectWord = match.getSuggestedReplacements().get(0);
+                    int start = match.getFromPos();
+                    int end = match.getToPos();
+
+                    // Выполняем автозамену
+                    replaceText(start, end, incorrectWord);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void replaceText(int start, int end, String replacement) {
+        textArea.replaceRange(replacement, start, end);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new SimpleSpellCheckEditor().setVisible(true);
+        });
+    }
+}
