@@ -1,0 +1,101 @@
+//использовал алгоритм Фишера-Йетса для более эффективной и случайной перетасовки
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+class Card {
+    private String rank;
+    private String suit;
+
+    public Card(String rank, String suit) {
+        this.rank = rank;
+        this.suit = suit;
+    }
+
+    @Override
+    public String toString() {
+        return rank + "-" + suit;
+    }
+}
+
+public class Deck {
+    private List<Card> cards;
+    private Random random;
+
+    public Deck() {
+        initializeDeck();
+        random = new Random();
+    }
+
+    // Инициализация колоды стандартными картами
+    private void initializeDeck() {
+        cards = new ArrayList<>();
+        String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+        String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
+
+        // Создание карт для каждой комбинации ранга и масти
+        for (String suit : suits) {
+            for (String rank : ranks) {
+                cards.add(new Card(rank, suit));
+            }
+        }
+    }
+
+    // Перетасовка колоды с использованием алгоритма Фишера-Йетса
+    public void shuffle() {
+        int size = cards.size();
+        for (int i = size - 1; i > 0; i--) {
+            // Генерация случайного индекса j в пределах [0, i]
+            int j = random.nextInt(i + 1);
+            
+            // Обмен местами карт с индексами i и j
+            Card temp = cards.get(i);
+            cards.set(i, cards.get(j));
+            cards.set(j, temp);
+        }
+    }
+
+    // Сдача карты из колоды
+    public Card dealCard() {
+        if (cards.isEmpty()) {
+            return null; // Колода пуста
+        }
+        return cards.remove(0);
+    }
+
+    // Возвращение карты в колоду с проверкой на дублирование
+    public void returnCard(Card card) {
+        if (!cards.contains(card)) {
+            cards.add(card); // Возвращаем карту в колоду только если она ранее не была там
+        }
+    }
+
+    public static void main(String[] args) {
+        Deck deck = new Deck();
+        deck.shuffle();
+
+        // Пример сдачи карты
+        Card dealtCard = deck.dealCard();
+        if (dealtCard != null) {
+            System.out.println("Сдана карта: " + dealtCard);
+        } else {
+            System.out.println("Колода пуста.");
+        }
+
+        // Пример возвращения карты с контролем дублирования
+        Card cardToReturn = new Card("2", "Hearts");
+        deck.returnCard(cardToReturn);
+
+        // Перемешиваем колоду после возвращения карты
+        deck.shuffle();
+
+        // Пример сдачи следующей карты
+        Card nextDealtCard = deck.dealCard();
+        if (nextDealtCard != null) {
+            System.out.println("Сдана следующая карта: " + nextDealtCard);
+        } else {
+            System.out.println("Колода пуста.");
+        }
+    }
+}
