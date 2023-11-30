@@ -1,0 +1,49 @@
+import java.util.Scanner;
+
+public class LeapYearChecker {
+
+    public static void main(String[] args) {
+        try {
+            int year = readYearFromUser();
+            
+            // Проверяем, является ли год високосным
+            if (isLeapYear(year)) {
+                System.out.println(year + " - високосный год.");
+            } else {
+                System.out.println(year + " - не високосный год.");
+            }
+        } catch (InputMismatchException e) {
+            // Обработка исключения при неверном вводе данных
+            System.out.println("Ошибка ввода. Пожалуйста, введите целое число для года.");
+        }
+    }
+
+    /**
+     * Метод для чтения года от пользователя.
+     *
+     * @return Введенный пользователем год.
+     * @throws InputMismatchException Возникает при неверном вводе данных.
+     */
+    public static int readYearFromUser() throws InputMismatchException {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Введите год для проверки на високосность:");
+        int year = scanner.nextInt();
+
+        // Закрываем Scanner
+        scanner.close();
+
+        return year;
+    }
+
+    /**
+     * Метод для определения, является ли год високосным.
+     *
+     * @param year Год для проверки.
+     * @return true, если год високосный, иначе false.
+     */
+    public static boolean isLeapYear(int year) {
+        // Год високосный, если он делится на 4, но не делится на 100, за исключением годов, которые делятся на 400
+        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+    }
+}
