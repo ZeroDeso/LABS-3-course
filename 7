@@ -1,0 +1,75 @@
+import java.util.Scanner;
+
+public class CompoundInterestCalculator {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Пользователь выбирает действие
+        System.out.println("Выберите действие:");
+        System.out.println("1. Вычислить сложный процент");
+        System.out.println("2. Вычислить процент для достижения суммы");
+
+        int choice = scanner.nextInt();
+
+        // В зависимости от выбора пользователя вызывается соответствующая функция
+        switch (choice) {
+            case 1:
+                calculateCompoundInterest();
+                break;
+            case 2:
+                calculateInterestRate();
+                break;
+            default:
+                System.out.println("Неверный выбор.");
+        }
+
+        scanner.close();
+    }
+
+    // Функция для вычисления сложного процента
+    private static void calculateCompoundInterest() {
+        double principal = getDoubleInput("Введите начальное число (принципал):");
+        double rate = getDoubleInput("Введите годовую процентную ставку:") / 100;
+        int periods = getIntInput("Введите количество периодов в годах:");
+
+        // Вычисление и вывод суммы через заданное количество периодов
+        double amount = calculateCompoundAmount(principal, rate, periods);
+        System.out.println("Сумма через " + periods + " периодов: " + amount);
+    }
+
+    // Функция для вычисления процента для достижения заданной суммы
+    private static void calculateInterestRate() {
+        double principal = getDoubleInput("Введите начальное число (принципал):");
+        double finalAmount = getDoubleInput("Введите конечное число:");
+        int periods = getIntInput("Введите количество периодов в годах:");
+
+        // Вычисление и вывод необходимой процентной ставки
+        double rate = calculateInterestRate(principal, finalAmount, periods);
+        System.out.println("Необходимый процент: " + rate * 100 + "%");
+    }
+
+    // Функция для ввода числа с плавающей точкой от пользователя
+    private static double getDoubleInput(String prompt) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(prompt);
+        return scanner.nextDouble();
+    }
+
+    // Функция для ввода целого числа от пользователя
+    private static int getIntInput(String prompt) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(prompt);
+        return scanner.nextInt();
+    }
+
+    // Функция для вычисления суммы через заданное количество периодов
+    private static double calculateCompoundAmount(double principal, double rate, int periods) {
+        return principal * Math.pow(1 + rate, periods);
+    }
+
+    // Функция для вычисления процента для достижения заданной суммы
+    private static double calculateInterestRate(double principal, double finalAmount, int periods) {
+        return Math.pow(finalAmount / principal, 1.0 / periods) - 1;
+    }
+}
