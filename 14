@@ -1,0 +1,81 @@
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.awt.*;
+import java.io.File;
+
+public class XMLParserApp extends JFrame {
+    private JTree xmlTree;
+
+    public XMLParserApp() {
+        setTitle("XML Parser");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(400, 300);
+
+        xmlTree = new JTree();
+        JScrollPane scrollPane = new JScrollPane(xmlTree);
+        add(scrollPane, BorderLayout.CENTER);
+
+        loadXMLFile("sample.xml");
+    }
+
+    private void loadXMLFile(String fileName) {
+        try {
+            File file = new File(fileName);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(file);
+
+            Element root = document.getDocumentElement();
+            DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(root.getNodeName());
+            processNode(root, rootNode);
+            xmlTree.setModel(new DefaultTreeModel(rootNode));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Ошибка при загрузке XML файла", "Ошибка", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void processNode(Node node, DefaultMutableTreeNode treeNode) {
+        NodeList nodeList = node.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node currentNode = nodeList.item(i);
+
+            if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element element = (Element) currentNode;
+                DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(getNodeText(element));
+                treeNode.add(childNode);
+
+                // Рекурсивный вызов для обработки вложенных элементов
+                processNode(currentNode, childNode);
+            }
+        }
+    }
+
+    private String getNodeText(Element element) {
+        StringBuilder text = new StringBuilder("<" + element.getTagName());
+
+        // Добавляем атрибуты, если они есть
+        if (element.hasAttributes()) {
+            for (int i = 0; i < element.getAttributes().getLength(); i++) {
+                Node attribute = element.getAttributes().item(i);
+                text.append(" ").append(attribute.getNodeName()).append("=\"").append(attribute.getNodeValue()).append("\"");
+            }
+        }
+
+        text.append(">");
+        return text.toString();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new XMLParserApp().setVisible(true);
+        });
+    }
+}
